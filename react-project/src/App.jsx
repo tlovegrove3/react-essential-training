@@ -1,13 +1,12 @@
-import { useState } from 'react'
-import './App.css'
-import three from '/images/books.png'
+import { useEffect, useReducer } from "react";
+import "./App.css";
+import three from "/images/books.png";
 
-const [ , , third] = ['tardigrade', 'dolphin', 'dog'];
+const [, , third] = ["tardigrade", "dolphin", "dog"];
 console.log(third);
 
-
-let language = 'JavaScript';
-let symbol = '🌚';
+let language = "JavaScript";
+let symbol = "🌚";
 
 function Header({ name, year }) {
   return (
@@ -18,60 +17,75 @@ function Header({ name, year }) {
   );
 }
 
-const courses = [
-  'SDEV255',
-  'SDEV272',
-  'IVYT111'
-];
+const courses = ["SDEV255", "SDEV272", "IVYT111"];
 
 const courseObjects = courses.map((course, i) => ({
-    id: i,
-    title: course
+  id: i,
+  title: course,
 }));
 
-function Main({ courses }) {
+function Main({ courses, openStatus, onStatus }) {
   return (
     <>
-    <div>
-      <h2>Welcome to the Course List</h2>
-    </div>
-    <main>
-      <img src={three} alt="Smiling face"/>
       <div>
+        <button onClick={onStatus}>
+          {openStatus ? "Close" : "Open"} Course
+        </button>
         <h2>
-          {language} is a good language to learn {symbol}<br />
-          List of courses:
+          Welcome to the Course List. --- {openStatus ? "Open" : "Closed"}
         </h2>
-        <ol>
-          {courses.map((course) => (
-            <li key={course.id} style=
-            {{
-              listStyleType: 'none'
-            }}
-            >{course.title}</li>
-          ))}
-        </ol>
       </div>
-    </main>
+      <main>
+        <img
+          src={three}
+          alt="Smiling face"
+        />
+        <div>
+          <h2>
+            {language} is a good language to learn {symbol}
+            <br />
+            List of courses:
+          </h2>
+          <ul>
+            {courses.map((course) => (
+              <li
+                key={course.id}
+                style={{ listStyleType: "none" }}
+              >
+                {course.title}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </main>
     </>
   );
 }
 
-
 function App() {
-  const [status, setStatus] = useState(true);
+  // <button onClick={() => onStatus(true)}>I want to be open</button>;
+  const [status, toggle] = useReducer((status) => !status, true);
+
+  useEffect(() => {
+    console.log(`The course is currently ${status ? "Open" : "Closed"}.`, [
+      status,
+    ]);
+  });
   return (
     <div>
       <h1>The course is currently {status ? "Open" : "Closed"}</h1>
-      <button onClick={() =>  setStatus(!status)}>
-        { status ? 'Close' : 'Open' } Course
-      </button>
-
-      <Header name="TJ" year={2025}/>
-        <Main courses={courseObjects} openStatus={status}/>
+      <button onClick={toggle}>{status ? "Close" : "Open"} Course</button>
+      <Header
+        name="TJ"
+        year={2025}
+      />
+      <Main
+        courses={courseObjects}
+        openStatus={status}
+        onStatus={toggle}
+      />
     </div>
-    
-  )
+  );
 }
 
-export default App
+export default App;
